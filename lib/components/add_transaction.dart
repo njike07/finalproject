@@ -1,68 +1,123 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'expense_item.dart';
 
 class AddTransaction extends StatefulWidget {
-  final Function addExpense;
+  final Function(String, double, String, DateTime) addExpense;
+  final ExpenseItem? existingExpense;
 
-  AddTransaction(this.addExpense);
+  AddTransaction(this.addExpense, {this.existingExpense});
 
   @override
   _AddTransactionState createState() => _AddTransactionState();
 }
 
 class _AddTransactionState extends State<AddTransaction> {
-  final _titleController = TextEditingController();
-  final _amountController = TextEditingController();
-  String _selectedCategory = 'Alimentation';
-  final _categories = ['Alimentation', 'Transport', 'Loisirs', 'Autres'];
+  final titleController = TextEditingController();
+  final amountController = TextEditingController();
+  String selectedCategory = 'Miscellaneous';
+  DateTime selectedDate = DateTime.now();
+
+  final List<String> categories = [
+    'Food',
+    'Transport',
+    'Entertainment',
+    'Utilities',
+    'Miscellaneous'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingExpense != null) {
+      titleController.text = widget.existingExpense!.title;
+      amountController.text = widget.existingExpense!.amount.toString();
+      selectedCategory = widget.existingExpense!.category;
+      selectedDate = widget.existingExpense!.date;
+    }
+  }
 
   void _submitData() {
-    final title = _titleController.text;
-    final amount = double.tryParse(_amountController.text);
-    if (title.isEmpty || amount == null || amount <= 0) {
-      return;
+    final title = titleController.text;
+    final amount = double.tryParse(amountController.text) ?? 0.0;
+
+    if (title.isEmpty || amount <= 0) {
+      return; // Gérer les erreurs ici
     }
 
-    widget.addExpense(title, amount, _selectedCategory);
+    // Appeler la fonction pour ajouter ou modifier une dépense
+    if (widget.existingExpense != null) {
+      // Modifier une dépense existante
+      widget.addExpense(title, amount, selectedCategory, selectedDate);
+    } else {
+      // Ajouter une nouvelle dépense
+      widget.addExpense(title, amount, selectedCategory, selectedDate);
+    }
+
     Navigator.of(context).pop();
+  }
+
+  void _selectDate(BuildContext context) {
+    showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      if (pickedDate == null) return;
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 5,
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             TextField(
-              controller: _titleController,
               decoration: InputDecoration(labelText: 'Title'),
-              onSubmitted: (_) => _submitData(),
+              controller: titleController,
             ),
             TextField(
-              controller: _amountController,
               decoration: InputDecoration(labelText: 'Amount'),
+              controller: amountController,
               keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('Date: ${DateFormat.yMd().format(selectedDate)}'),
+                ),
+                TextButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text('Choose Date'),
+                ),
+              ],
             ),
             DropdownButton<String>(
-              value: _selectedCategory,
-              items: _categories.map((category) {
-                return DropdownMenuItem(
+              value: selectedCategory,
+              items: categories.map((String category) {
+                return DropdownMenuItem<String>(
                   value: category,
                   child: Text(category),
                 );
               }).toList(),
-              onChanged: (newValue) {
+              onChanged: (String? newValue) {
                 setState(() {
-                  _selectedCategory = newValue!;
+                  selectedCategory = newValue!;
                 });
               },
             ),
             ElevatedButton(
               onPressed: _submitData,
-              child: Text('Add Transaction'),
+              child: Text(widget.existingExpense != null
+                  ? 'Edit Expense'
+                  : 'Add Expense'),
             ),
           ],
         ),

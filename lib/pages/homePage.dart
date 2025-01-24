@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:projetfinal/components/add_transaction.dart';
-//import 'package:intl/intl.dart';
 import 'package:projetfinal/components/expense_item.dart';
+import 'package:intl/intl.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(Homepage());
 
-class MyApp extends StatelessWidget {
+class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,12 +36,12 @@ class ExpenseList extends StatefulWidget {
 class _ExpenseListState extends State<ExpenseList> {
   final List<ExpenseItem> _expenses = [];
 
-  /// Méthode pour ajouter une dépense
-  void _addExpense(String title, double amount, String category) {
+  void _addExpense(
+      String title, double amount, String category, DateTime date) {
     final newExpense = ExpenseItem(
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: date,
       category: category,
     );
 
@@ -50,28 +50,32 @@ class _ExpenseListState extends State<ExpenseList> {
     });
   }
 
-  /// Méthode pour supprimer une dépense
   void _deleteExpense(String title) {
     setState(() {
       _expenses.removeWhere((expense) => expense.title == title);
     });
   }
 
-  /// Méthode pour obtenir les dépenses quotidiennes
-  List<ExpenseItem> _getDailyExpenses() {
-    return _expenses.where((expense) {
-      return expense.date.day == DateTime.now().day &&
-          expense.date.month == DateTime.now().month &&
-          expense.date.year == DateTime.now().year;
-    }).toList();
+  void _editExpense(ExpenseItem expense, String title, double amount,
+      String category, DateTime date) {
+    setState(() {
+      expense.title = title;
+      expense.amount = amount;
+      expense.category = category;
+      expense.date = date;
+    });
   }
 
-  /// Méthode pour obtenir les dépenses hebdomadaires
   List<double> _getWeeklyExpenses() {
     List<double> weeklyExpenses = List.filled(7, 0.0);
+    DateTime now = DateTime.now();
+
     for (var expense in _expenses) {
-      int weekday = expense.date.weekday; // 1 = Lundi, 7 = Dimanche
-      weeklyExpenses[weekday - 1] += expense.amount;
+      if (expense.date.isAfter(now.subtract(Duration(days: now.weekday - 1))) &&
+          expense.date.isBefore(now.add(Duration(days: 8 - now.weekday)))) {
+        int weekdayIndex = expense.date.weekday - 1;
+        weeklyExpenses[weekdayIndex] += expense.amount;
+      }
     }
     return weeklyExpenses;
   }
@@ -109,13 +113,38 @@ class _ExpenseListState extends State<ExpenseList> {
                         expense.category,
                         style: TextStyle(color: Colors.blueGrey),
                       ),
+                      Text(
+                        DateFormat.yMd().format(expense.date),
+                        style: TextStyle(color: Colors.blueGrey),
+                      ),
                     ],
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _deleteExpense(expense.title);
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) => AddTransaction(
+                              (newTitle, newAmount, newCategory, newDate) {
+                                _editExpense(expense, newTitle, newAmount,
+                                    newCategory, newDate);
+                                Navigator.of(ctx).pop();
+                              },
+                              existingExpense: expense,
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          _deleteExpense(expense.title);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
