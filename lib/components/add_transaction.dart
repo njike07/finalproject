@@ -73,9 +73,10 @@ class _AddTransactionState extends State<AddTransaction> {
   Widget build(BuildContext context) {
     return Card(
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             TextField(
               decoration: InputDecoration(labelText: 'Title'),
