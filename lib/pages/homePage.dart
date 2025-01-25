@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:projetfinal/components/add_transaction.dart';
 import 'package:projetfinal/components/expense_item.dart';
 import 'package:intl/intl.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:projetfinal/pages/category_expenses.dart';
 
 void main() => runApp(Homepage());
 
@@ -14,16 +16,7 @@ class Homepage extends StatelessWidget {
         primarySwatch: Colors.purple,
         fontFamily: 'Quicksand',
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.purple,
-          title: Text(
-            "Personal Expenses",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        body: ExpenseList(),
-      ),
+      home: ExpenseList(),
     );
   }
 }
@@ -66,109 +59,95 @@ class _ExpenseListState extends State<ExpenseList> {
     });
   }
 
+  // Fonction pour obtenir les dépenses par jour
   List<double> _getWeeklyExpenses() {
-    List<double> weeklyExpenses = List.filled(7, 0.0);
-    DateTime now = DateTime.now();
-
+    List<double> weeklyExpenses =
+        List.filled(7, 0.0); // Une liste pour chaque jour de la semaine
     for (var expense in _expenses) {
-      if (expense.date.isAfter(now.subtract(Duration(days: now.weekday - 1))) &&
-          expense.date.isBefore(now.add(Duration(days: 8 - now.weekday)))) {
-        int weekdayIndex = expense.date.weekday - 1;
-        weeklyExpenses[weekdayIndex] += expense.amount;
-      }
+      int weekday = expense.date.weekday; // 1 = Lundi, 7 = Dimanche
+      weeklyExpenses[weekday - 1] +=
+          expense.amount; // Ajoute le montant à la bonne journée
     }
     return weeklyExpenses;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Column(
-          children: [
-            Text(
-              'Dépenses Hebdomadaires',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            _buildWeeklyExpensesChart(),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple,
+        title: Text(
+          "Personal Expenses",
+          style: TextStyle(color: Colors.white),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _expenses.length,
-            itemBuilder: (ctx, index) {
-              final expense = _expenses[index];
-              return Card(
-                child: ListTile(
-                  title: Text(expense.title),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '\$${expense.amount.toStringAsFixed(2)}',
-                        style: TextStyle(color: Colors.blueGrey),
-                      ),
-                      Text(
-                        expense.category,
-                        style: TextStyle(color: Colors.blueGrey),
-                      ),
-                      Text(
-                        DateFormat.yMd().format(expense.date),
-                        style: TextStyle(color: Colors.blueGrey),
-                      ),
-                    ],
+      ),
+      body: Column(
+        children: <Widget>[
+          _buildWeeklyExpensesChart(), // Ajout du graphique des dépenses hebdomadaires
+          Expanded(
+            child: ListView.builder(
+              itemCount: _expenses.length,
+              itemBuilder: (ctx, index) {
+                final expense = _expenses[index];
+                return Card(
+                  child: ListTile(
+                    title: Text(expense.title),
+                    subtitle: Text('\$${expense.amount.toStringAsFixed(2)}'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        _deleteExpense(expense.title);
+                      },
+                    ),
                   ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (ctx) => AddTransaction(
-                              (newTitle, newAmount, newCategory, newDate) {
-                                _editExpense(expense, newTitle, newAmount,
-                                    newCategory, newDate);
-                                Navigator.of(ctx).pop();
-                              },
-                              existingExpense: expense,
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _deleteExpense(expense.title);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                );
+              },
+            ),
+          ),
+          FloatingActionButton(
+            backgroundColor: const Color.fromARGB(255, 233, 213, 33),
+            shape: CircleBorder(),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (ctx) => AddTransaction(_addExpense),
               );
             },
+            child: Icon(Icons.add),
           ),
-        ),
-        FloatingActionButton(
-          backgroundColor: const Color.fromARGB(255, 233, 213, 33),
-          shape: CircleBorder(),
-          onPressed: () {
+        ],
+      ),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.blueAccent,
+        items: <Widget>[
+          Icon(Icons.add, size: 30),
+          Icon(Icons.list, size: 30),
+          Icon(Icons.compare_arrows, size: 30),
+        ],
+        onTap: (index) {
+          if (index == 0) {
             showModalBottomSheet(
               context: context,
               builder: (ctx) => AddTransaction(_addExpense),
             );
-          },
-          child: Icon(Icons.add),
-        ),
-      ],
+          } else if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CategoryExpenses(
+                    expenses: _expenses), // Ajoutez les dépenses ici
+              ),
+            );
+          } else if (index == 2) {}
+        },
+      ),
     );
   }
 
   Widget _buildWeeklyExpensesChart() {
     List<double> expenses = _getWeeklyExpenses();
-    double maxExpense = expenses.reduce((a, b) => a > b ? a : b);
+    double maxExpense =
+        expenses.reduce((a, b) => a > b ? a : b); // Trouver le montant maximum
     double maxBarHeight = 100.0;
 
     return Padding(
@@ -182,8 +161,8 @@ class _ExpenseListState extends State<ExpenseList> {
           return Column(
             children: [
               Container(
-                height: maxBarHeight,
-                width: 20,
+                height: maxBarHeight, // Hauteur  de la barre
+                width: 20, // Largeur de la barre
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(5),
@@ -199,7 +178,7 @@ class _ExpenseListState extends State<ExpenseList> {
                 ),
               ),
               SizedBox(height: 5),
-              Text(_getWeekdayLabel(index)),
+              Text(_getWeekdayLabel(index)), // Jours de la semaine
             ],
           );
         }),

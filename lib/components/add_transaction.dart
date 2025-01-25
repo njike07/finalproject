@@ -47,10 +47,8 @@ class _AddTransactionState extends State<AddTransaction> {
 
     // Appeler la fonction pour ajouter ou modifier une dépense
     if (widget.existingExpense != null) {
-      // Modifier une dépense existante
       widget.addExpense(title, amount, selectedCategory, selectedDate);
     } else {
-      // Ajouter une nouvelle dépense
       widget.addExpense(title, amount, selectedCategory, selectedDate);
     }
 
@@ -99,19 +97,42 @@ class _AddTransactionState extends State<AddTransaction> {
                 ),
               ],
             ),
-            DropdownButton<String>(
-              value: selectedCategory,
-              items: categories.map((String category) {
-                return DropdownMenuItem<String>(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCategory = newValue!;
-                });
-              },
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              margin: EdgeInsets.only(
+                  top: 10, bottom: 10), // Espace autour du dropdown
+              child: DropdownButton<String>(
+                value: selectedCategory,
+                items: categories.map((String category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedCategory = newValue!;
+                  });
+                },
+                icon: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Icon(Icons.arrow_drop_down, color: Colors.purple),
+                ),
+                isExpanded: true, // Prendre tout l'espace disponible
+                underline: SizedBox(), // Supprimer la ligne par défaut
+              ),
             ),
             ElevatedButton(
               onPressed: _submitData,
