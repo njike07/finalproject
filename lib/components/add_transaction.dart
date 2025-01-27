@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'expense_item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTransaction extends StatefulWidget {
   final Function(String, double, String, DateTime) addExpense;
   final ExpenseItem? existingExpense;
 
-  AddTransaction(this.addExpense, {this.existingExpense});
+  const AddTransaction(this.addExpense, {super.key, this.existingExpense});
 
   @override
   _AddTransactionState createState() => _AddTransactionState();

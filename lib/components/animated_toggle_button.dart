@@ -8,7 +8,7 @@ class AnimatedToggle extends StatefulWidget {
   final Color textColor;
   final List<BoxShadow> shadows;
 
-  AnimatedToggle({
+  const AnimatedToggle({super.key, 
     required this.values,
     required this.onToggleCallback,
     this.backgroundColor = const Color(0xFFe7e7e8),
@@ -16,7 +16,7 @@ class AnimatedToggle extends StatefulWidget {
     this.textColor = const Color(0xFF000000),
     this.shadows = const [
       BoxShadow(
-        color: const Color(0xFFd8d7da),
+        color: Color(0xFFd8d7da),
         spreadRadius: 5,
         blurRadius: 10,
         offset: Offset(0, 5),
@@ -92,6 +92,7 @@ class _AnimatedToggleState extends State<AnimatedToggle> {
                   borderRadius: BorderRadius.circular(width * 0.1),
                 ),
               ),
+              alignment: Alignment.center,
               child: Text(
                 initialPosition ? widget.values[0] : widget.values[1],
                 style: TextStyle(
@@ -101,7 +102,6 @@ class _AnimatedToggleState extends State<AnimatedToggle> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              alignment: Alignment.center,
             ),
           ),
         ],

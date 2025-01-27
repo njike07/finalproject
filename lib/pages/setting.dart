@@ -7,6 +7,8 @@ import 'package:projetfinal/pages/category_expenses.dart';
 import 'package:projetfinal/pages/homePage.dart';
 
 class SettingPage extends StatefulWidget {
+  const SettingPage({super.key});
+
   @override
   _SettingPageState createState() => _SettingPageState();
 }
@@ -15,7 +17,7 @@ class _SettingPageState extends State<SettingPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   bool isDarkMode = false;
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ThemeColor lightMode = ThemeColor(
     gradient: [
@@ -28,7 +30,7 @@ class _SettingPageState extends State<SettingPage>
     toggleBackgroundColor: const Color(0xFFe7e7e8),
     shadow: const [
       BoxShadow(
-        color: const Color(0xFFd8d7da),
+        color: Color(0xFFd8d7da),
         spreadRadius: 5,
         blurRadius: 10,
         offset: Offset(0, 5),
@@ -47,7 +49,7 @@ class _SettingPageState extends State<SettingPage>
     toggleBackgroundColor: const Color(0xFF222029),
     shadow: const <BoxShadow>[
       BoxShadow(
-        color: const Color(0x66000000),
+        color: Color(0x66000000),
         spreadRadius: 5,
         blurRadius: 10,
         offset: Offset(0, 5),
@@ -143,7 +145,7 @@ class _SettingPageState extends State<SettingPage>
                 ),
               ),
               SizedBox(height: height * 0.03),
-              Container(
+              SizedBox(
                 width: width * 0.7,
                 child: Text(
                   ' Day or night.',

@@ -1,4 +1,4 @@
-/*import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projetfinal/components/expense_item.dart';
 
 class DatabaseService {
@@ -24,4 +24,17 @@ class DatabaseService {
       );
     }).toList();
   }
-}*/
+
+  Future<void> deleteExpense(String id) async {
+    await db.collection('expenses').doc(id).delete();
+  }
+
+  Future<void> updateExpense(String id, ExpenseItem expense) async {
+    await db.collection('expenses').doc(id).update({
+      'title': expense.title,
+      'amount': expense.amount,
+      'date': expense.date,
+      'category': expense.category,
+    });
+  }
+}

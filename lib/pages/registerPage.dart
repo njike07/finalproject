@@ -7,7 +7,7 @@ import 'package:projetfinal/components/square_tile.dart';
 
 class Registerpage extends StatefulWidget {
   final Function()? onTap;
-  Registerpage({super.key, required this.onTap});
+  const Registerpage({super.key, required this.onTap});
 
   @override
   State<Registerpage> createState() => _RegisterPageState();
@@ -148,7 +148,7 @@ class _RegisterPageState extends State<Registerpage> {
 
                 MyTextField(
                   controller: confirmpasswordController,
-                  hintText: 'Confirm Password',
+                  hintText: 'Confirm Password ',
                   obscureText: true,
                 ),
 

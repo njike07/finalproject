@@ -5,6 +5,8 @@ import 'package:projetfinal/components/expense_item.dart';
 import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projetfinal/services/database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +15,10 @@ void main() async {
 }
 
 class Homepage extends StatelessWidget {
+  const Homepage({super.key});
+
+  const Homepage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,15 +33,32 @@ class Homepage extends StatelessWidget {
 }
 
 class ExpenseList extends StatefulWidget {
+  const ExpenseList({super.key});
+
+  const ExpenseList({super.key});
+
   @override
   _ExpenseListState createState() => _ExpenseListState();
 }
 
 class _ExpenseListState extends State<ExpenseList> {
-  final List<ExpenseItem> _expenses = [];
+  final DatabaseService _databaseService = DatabaseService();
+  List<ExpenseItem> _expenses = [];
 
-  void _addExpense(
-      String title, double amount, String category, DateTime date) {
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  void _loadExpenses() async {
+    List<ExpenseItem> expenses = await _databaseService.getExpenses();
+    setState(() {
+      _expenses = expenses;
+    });
+  }
+
+  void _addExpense(String title, double amount, String category, DateTime date) async {
     final newExpense = ExpenseItem(
       title: title,
       amount: amount,
@@ -43,51 +66,18 @@ class _ExpenseListState extends State<ExpenseList> {
       category: category,
     );
 
-    setState(() {
-      _expenses.add(newExpense);
-    });
+    await _databaseService.addExpense(newExpense);
+    _loadExpenses();
   }
 
-  void _deleteExpense(String title) {
-    setState(() {
-      _expenses.removeWhere((expense) => expense.title == title);
-    });
+  void _deleteExpense(String id) async {
+    await _databaseService.deleteExpense(id);
+    _loadExpenses();
   }
 
-  void _editExpense(ExpenseItem expense, String title, double amount,
-      String category, DateTime date) {
-    // Valider les entrées avant de modifier
-    if (title.isEmpty || amount <= 0 || category.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      // Creation une nouvelle instance de ExpenseItem
-      var updatedExpense = ExpenseItem(
-        title: title,
-        amount: amount,
-        date: date,
-        category: category,
-      );
-
-      // Remplacer l'ancienne dépense par la nouvelle
-      int index = _expenses.indexOf(expense);
-      if (index != -1) {
-        _expenses[index] = updatedExpense;
-      }
-    });
-  }
-
-  // Fonction pour obtenir les dépenses par jour
-  List<double> _getWeeklyExpenses() {
-    List<double> weeklyExpenses =
-        List.filled(7, 0.0); // Une liste pour chaque jour de la semaine
-    for (var expense in _expenses) {
-      int weekday = expense.date.weekday; // 1 = Lundi, 7 = Dimanche
-      weeklyExpenses[weekday - 1] +=
-          expense.amount; // Ajoute le montant à la bonne journée
-    }
-    return weeklyExpenses;
+  void _editExpense(String id, ExpenseItem expense) async {
+    await _databaseService.updateExpense(id, expense);
+    _loadExpenses();
   }
 
   @override
@@ -102,7 +92,6 @@ class _ExpenseListState extends State<ExpenseList> {
       ),
       body: Column(
         children: <Widget>[
-          _buildWeeklyExpensesChart(), // Ajout du graphique des dépenses hebdomadaires
           Expanded(
             child: ListView.builder(
               itemCount: _expenses.length,
@@ -118,7 +107,7 @@ class _ExpenseListState extends State<ExpenseList> {
                         _deleteExpense(expense.title);
                       },
                     ),
-                    onTap: () {},
+                  onTap: () {},
                   ),
                 );
               },
@@ -165,6 +154,7 @@ class _ExpenseListState extends State<ExpenseList> {
       ),
     );
   }
+
 
   Widget _buildWeeklyExpensesChart() {
     List<double> expenses = _getWeeklyExpenses();
@@ -214,3 +204,4 @@ class _ExpenseListState extends State<ExpenseList> {
     return weekdays[index];
   }
 }
+

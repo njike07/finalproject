@@ -14,7 +14,7 @@ class Expense {
 class CategoryExpenses extends StatelessWidget {
   final List<Expense> expenses;
 
-  CategoryExpenses({required this.expenses});
+  const CategoryExpenses({super.key, required this.expenses});
 
   @override
   Widget build(BuildContext context) {
