@@ -118,8 +118,7 @@ class _ExpenseListState extends State<ExpenseList> {
                         _deleteExpense(expense.title);
                       },
                     ),
-                    onTap: () {
-                    },
+                    onTap: () {},
                   ),
                 );
               },
@@ -150,7 +149,6 @@ class _ExpenseListState extends State<ExpenseList> {
         onTap: (index) {
           if (index == 0) {
             // Navigation vers le graphique
-
           } else if (index == 1) {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => Homepage()),
@@ -170,8 +168,8 @@ class _ExpenseListState extends State<ExpenseList> {
 
   Widget _buildWeeklyExpensesChart() {
     List<double> expenses = _getWeeklyExpenses();
-    double maxExpense =
-        expenses.reduce((a, b) => a > b ? a : b); // ici on trouve le montant maximum
+    double maxExpense = expenses
+        .reduce((a, b) => a > b ? a : b); // ici on trouve le montant maximum
     double maxBarHeight = 100.0;
 
     return Padding(
@@ -202,7 +200,7 @@ class _ExpenseListState extends State<ExpenseList> {
                 ),
               ),
               SizedBox(height: 5),
-              Text(_getWeekdayLabel(index)), 
+              Text(_getWeekdayLabel(index)),
               // Jours de la semaine
             ],
           );
