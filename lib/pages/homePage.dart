@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projetfinal/services/database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,10 +34,23 @@ class ExpenseList extends StatefulWidget {
 }
 
 class _ExpenseListState extends State<ExpenseList> {
-  final List<ExpenseItem> _expenses = [];
+  final DatabaseService _databaseService = DatabaseService();
+  List<ExpenseItem> _expenses = [];
 
-  void _addExpense(
-      String title, double amount, String category, DateTime date) {
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  void _loadExpenses() async {
+    List<ExpenseItem> expenses = await _databaseService.getExpenses();
+    setState(() {
+      _expenses = expenses;
+    });
+  }
+
+  void _addExpense(String title, double amount, String category, DateTime date) async {
     final newExpense = ExpenseItem(
       title: title,
       amount: amount,
@@ -44,51 +58,18 @@ class _ExpenseListState extends State<ExpenseList> {
       category: category,
     );
 
-    setState(() {
-      _expenses.add(newExpense);
-    });
+    await _databaseService.addExpense(newExpense);
+    _loadExpenses();
   }
 
-  void _deleteExpense(String title) {
-    setState(() {
-      _expenses.removeWhere((expense) => expense.title == title);
-    });
+  void _deleteExpense(String id) async {
+    await _databaseService.deleteExpense(id);
+    _loadExpenses();
   }
 
-  void _editExpense(ExpenseItem expense, String title, double amount,
-      String category, DateTime date) {
-    // Valider les entrées avant de modifier
-    if (title.isEmpty || amount <= 0 || category.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      // Creation une nouvelle instance de ExpenseItem
-      var updatedExpense = ExpenseItem(
-        title: title,
-        amount: amount,
-        date: date,
-        category: category,
-      );
-
-      // Remplacer l'ancienne dépense par la nouvelle
-      int index = _expenses.indexOf(expense);
-      if (index != -1) {
-        _expenses[index] = updatedExpense;
-      }
-    });
-  }
-
-  // Fonction pour obtenir les dépenses par jour
-  List<double> _getWeeklyExpenses() {
-    List<double> weeklyExpenses =
-        List.filled(7, 0.0); // Une liste pour chaque jour de la semaine
-    for (var expense in _expenses) {
-      int weekday = expense.date.weekday; // 1 = Lundi, 7 = Dimanche
-      weeklyExpenses[weekday - 1] +=
-          expense.amount; // Ajoute le montant à la bonne journée
-    }
-    return weeklyExpenses;
+  void _editExpense(String id, ExpenseItem expense) async {
+    await _databaseService.updateExpense(id, expense);
+    _loadExpenses();
   }
 
   @override
@@ -103,7 +84,6 @@ class _ExpenseListState extends State<ExpenseList> {
       ),
       body: Column(
         children: <Widget>[
-          _buildWeeklyExpensesChart(), // Ajout du graphique des dépenses hebdomadaires
           Expanded(
             child: ListView.builder(
               itemCount: _expenses.length,
@@ -120,6 +100,7 @@ class _ExpenseListState extends State<ExpenseList> {
                       },
                     ),
                     onTap: () {
+                      // Navigate to edit page
                     },
                   ),
                 );
@@ -151,7 +132,6 @@ class _ExpenseListState extends State<ExpenseList> {
         onTap: (index) {
           if (index == 0) {
             // Navigation vers le graphique
-
           } else if (index == 1) {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => Homepage()),
@@ -167,53 +147,5 @@ class _ExpenseListState extends State<ExpenseList> {
         },
       ),
     );
-  }
-
-  Widget _buildWeeklyExpensesChart() {
-    List<double> expenses = _getWeeklyExpenses();
-    double maxExpense =
-        expenses.reduce((a, b) => a > b ? a : b); // ici on trouve le montant maximum
-    double maxBarHeight = 100.0;
-
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(7, (index) {
-          double heightFactor =
-              maxExpense > 0 ? (expenses[index] / maxExpense) : 0;
-
-          return Column(
-            children: [
-              Container(
-                height: maxBarHeight, // Hauteur de la barre
-                width: 20, // Largeur de la barre
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FractionallySizedBox(
-                  heightFactor: heightFactor,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.purple,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(_getWeekdayLabel(index)), 
-              // Jours de la semaine
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
-  String _getWeekdayLabel(int index) {
-    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    return weekdays[index];
   }
 }
