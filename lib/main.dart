@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:projetfinal/noti_service.dart';
 import 'package:projetfinal/pages/auth_page.dart';
