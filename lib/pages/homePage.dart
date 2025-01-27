@@ -18,7 +18,7 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Personal Expenses',
+      title: 'Personal  Expenses',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         fontFamily: 'Quicksand',
