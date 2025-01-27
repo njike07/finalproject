@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,6 @@ class _RegisterPageState extends State<Registerpage> {
           );
         });
 
-    /* await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );*/
-
     // password verification
 
     try {
@@ -43,10 +39,18 @@ class _RegisterPageState extends State<Registerpage> {
           email: emailController.text,
           password: passwordController.text,
         );
+
+        addUserDetails(
+          emailController.text.trim(),
+          passwordController.text.trim(),
+        );
       } else {
         showErrorMessage("Password dont match ");
       }
-      Navigator.pop(context);
+      // create a user document and add to firestore
+      //createUserDocument(userCredential);
+
+      if (context.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       showErrorMessage(e.code);
@@ -54,6 +58,13 @@ class _RegisterPageState extends State<Registerpage> {
 
     //pop the loading circle
     Navigator.pop(context);
+  }
+
+  Future addUserDetails(String email, String password) async {
+    await FirebaseFirestore.instance.collection('users').add({
+      'email': email,
+      'password': password,
+    });
   }
 
   //wrong email message poup
@@ -72,6 +83,19 @@ class _RegisterPageState extends State<Registerpage> {
               ));
         });
   }
+
+  //create a user document and collect then firestore
+  /*Future<void> createUserDocument(UserCredential? userCredential) async {
+    if (userCredential != null && userCredential.user != null) {
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userCredential.user!.email)
+          .set({
+        'email': userCredential.user!.email,
+        'password': passwordController.text,
+      });
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {

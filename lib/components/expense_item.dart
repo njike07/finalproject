@@ -1,8 +1,8 @@
 class ExpenseItem {
-  String title; // Retirer 'final'
-  double amount; // Retirer 'final'
-  DateTime date; // Retirer 'final'
-  String category;
+  final String title;
+  final double amount;
+  final DateTime date;
+  final String category;
 
   ExpenseItem({
     required this.title,

@@ -45,12 +45,8 @@ class _AddTransactionState extends State<AddTransaction> {
       return; // Gérer les erreurs ici
     }
 
-    // Appeler la fonction pour ajouter ou modifier une dépense
-    if (widget.existingExpense != null) {
-      widget.addExpense(title, amount, selectedCategory, selectedDate);
-    } else {
-      widget.addExpense(title, amount, selectedCategory, selectedDate);
-    }
+    // Appeler la fonction pour ajouter une dépense
+    widget.addExpense(title, amount, selectedCategory, selectedDate);
 
     Navigator.of(context).pop();
   }
@@ -102,8 +98,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 border: Border.all(color: Colors.grey, width: 1),
                 borderRadius: BorderRadius.circular(5),
               ),
-              margin: EdgeInsets.only(
-                  top: 10, bottom: 10), // Espace autour du dropdown
+              margin: EdgeInsets.only(top: 10, bottom: 10),
               child: DropdownButton<String>(
                 value: selectedCategory,
                 items: categories.map((String category) {
@@ -130,8 +125,8 @@ class _AddTransactionState extends State<AddTransaction> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Icon(Icons.arrow_drop_down, color: Colors.purple),
                 ),
-                isExpanded: true, // Prendre tout l'espace disponible
-                underline: SizedBox(), // Supprimer la ligne par défaut
+                isExpanded: true,
+                underline: SizedBox(),
               ),
             ),
             ElevatedButton(

@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:projetfinal/components/add_transaction.dart';
 import 'package:projetfinal/components/expense_item.dart';
@@ -6,6 +7,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
 
 void main() => runApp(Homepage());
+//final collectionReference myItems = FirebaseFirestore.instance;
 
 class Homepage extends StatelessWidget {
   @override
@@ -118,27 +120,27 @@ class _ExpenseListState extends State<ExpenseList> {
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.blueAccent,
-        items: <Widget>[
-          Icon(Icons.add, size: 30),
-          Icon(Icons.list, size: 30),
-          Icon(Icons.compare_arrows, size: 30),
+        color: Colors.purple,
+        backgroundColor: Colors.white,
+        animationDuration: const Duration(milliseconds: 400),
+        items: const <Widget>[
+          Icon(Icons.bar_chart, size: 30, color: Colors.white),
+          Icon(Icons.list, size: 30, color: Colors.white),
+          Icon(Icons.settings, size: 30, color: Colors.white),
         ],
         onTap: (index) {
-          if (index == 0) {
-            showModalBottomSheet(
-              context: context,
-              builder: (ctx) => AddTransaction(_addExpense),
+          if (index == 1) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => Homepage()),
             );
           } else if (index == 1) {
-            Navigator.push(
-              context,
+            Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => CategoryExpenses(
-                    expenses: _expenses), // Ajoutez les dépenses ici
-              ),
+                  builder: (context) => CategoryExpenses(
+                        expenses: [],
+                      )),
             );
-          } else if (index == 2) {}
+          }
         },
       ),
     );
