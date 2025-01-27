@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +41,10 @@ class _RegisterPageState extends State<Registerpage> {
           password: passwordController.text,
         );
 
-        addUserDetails(
+        /*addUserDetails(
           emailController.text.trim(),
           passwordController.text.trim(),
-        );
+        );*/
       } else {
         showErrorMessage("Password dont match ");
       }
@@ -62,12 +61,12 @@ class _RegisterPageState extends State<Registerpage> {
     Navigator.pop(context);
   }
 
-  Future addUserDetails(String email, String password) async {
+  /*Future addUserDetails(String email, String password) async {
     await FirebaseFirestore.instance.collection('users').add({
       'email': email,
       'password': password,
     });
-  }
+  }*/
 
   //wrong email message poup
 

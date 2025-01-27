@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+/*import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projetfinal/components/expense_item.dart';
 
 class DatabaseService {
@@ -25,4 +25,4 @@ class DatabaseService {
       );
     }).toList();
   }
-}
+}*/
