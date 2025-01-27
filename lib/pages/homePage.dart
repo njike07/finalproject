@@ -15,10 +15,6 @@ void main() async {
 }
 
 class Homepage extends StatelessWidget {
-  const Homepage({super.key});
-
-  const Homepage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,10 +29,6 @@ class Homepage extends StatelessWidget {
 }
 
 class ExpenseList extends StatefulWidget {
-  const ExpenseList({super.key});
-
-  const ExpenseList({super.key});
-
   @override
   _ExpenseListState createState() => _ExpenseListState();
 }
@@ -107,7 +99,9 @@ class _ExpenseListState extends State<ExpenseList> {
                         _deleteExpense(expense.title);
                       },
                     ),
-                  onTap: () {},
+                    onTap: () {
+                      // Navigate to edit page
+                    },
                   ),
                 );
               },
@@ -154,54 +148,4 @@ class _ExpenseListState extends State<ExpenseList> {
       ),
     );
   }
-
-
-  Widget _buildWeeklyExpensesChart() {
-    List<double> expenses = _getWeeklyExpenses();
-    double maxExpense = expenses
-        .reduce((a, b) => a > b ? a : b); // ici on trouve le montant maximum
-    double maxBarHeight = 100.0;
-
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(7, (index) {
-          double heightFactor =
-              maxExpense > 0 ? (expenses[index] / maxExpense) : 0;
-
-          return Column(
-            children: [
-              Container(
-                height: maxBarHeight, // Hauteur de la barre
-                width: 20, // Largeur de la barre
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: FractionallySizedBox(
-                  heightFactor: heightFactor,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.purple,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Text(_getWeekdayLabel(index)),
-              // Jours de la semaine
-            ],
-          );
-        }),
-      ),
-    );
-  }
-
-  String _getWeekdayLabel(int index) {
-    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    return weekdays[index];
-  }
 }
-
