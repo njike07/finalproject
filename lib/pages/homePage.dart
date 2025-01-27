@@ -5,6 +5,7 @@ import 'package:projetfinal/components/expense_item.dart';
 import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
