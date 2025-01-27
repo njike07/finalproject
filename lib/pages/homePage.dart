@@ -6,8 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
 
-void main() => runApp(Homepage());
-//final collectionReference myItems = FirebaseFirestore.instance;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialiser Firebase
+  runApp(Homepage());
+}
 
 class Homepage extends StatelessWidget {
   @override
@@ -53,11 +56,26 @@ class _ExpenseListState extends State<ExpenseList> {
 
   void _editExpense(ExpenseItem expense, String title, double amount,
       String category, DateTime date) {
+    // Valider les entrées avant de modifier
+    if (title.isEmpty || amount <= 0 || category.isEmpty) {
+      // Vous pouvez afficher un message d'erreur ici si nécessaire
+      return;
+    }
+
     setState(() {
-      expense.title = title;
-      expense.amount = amount;
-      expense.category = category;
-      expense.date = date;
+      // Créer une nouvelle instance de ExpenseItem
+      var updatedExpense = ExpenseItem(
+        title: title,
+        amount: amount,
+        date: date,
+        category: category,
+      );
+
+      // Remplacer l'ancienne dépense par la nouvelle
+      int index = _expenses.indexOf(expense);
+      if (index != -1) {
+        _expenses[index] = updatedExpense;
+      }
     });
   }
 
@@ -101,6 +119,9 @@ class _ExpenseListState extends State<ExpenseList> {
                         _deleteExpense(expense.title);
                       },
                     ),
+                    onTap: () {
+                      // Ajoutez une fonctionnalité pour éditer si nécessaire
+                    },
                   ),
                 );
               },
@@ -129,11 +150,14 @@ class _ExpenseListState extends State<ExpenseList> {
           Icon(Icons.settings, size: 30, color: Colors.white),
         ],
         onTap: (index) {
-          if (index == 1) {
+          if (index == 0) {
+            // Navigation vers le graphique
+            // Ajoutez votre logique ici
+          } else if (index == 1) {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => Homepage()),
             );
-          } else if (index == 1) {
+          } else if (index == 2) {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => CategoryExpenses(
@@ -163,7 +187,7 @@ class _ExpenseListState extends State<ExpenseList> {
           return Column(
             children: [
               Container(
-                height: maxBarHeight, // Hauteur  de la barre
+                height: maxBarHeight, // Hauteur de la barre
                 width: 20, // Largeur de la barre
                 decoration: BoxDecoration(
                   color: Colors.grey[300],

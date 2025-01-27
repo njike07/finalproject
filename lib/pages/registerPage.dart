@@ -20,6 +20,8 @@ class _RegisterPageState extends State<Registerpage> {
   final passwordController = TextEditingController();
   final confirmpasswordController = TextEditingController();
 
+  //late DatabaseReference dbRef;
+
   // sign user up method
   void signUserUp() async {
     // show the loading circle

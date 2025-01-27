@@ -7,6 +7,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
+  
 
   NotifService().initNotification();
   await Firebase.initializeApp(
