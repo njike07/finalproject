@@ -13,7 +13,6 @@ class DatabaseService {
     });
   }
 
-  // Vous pouvez ajouter d'autres méthodes pour lire, mettre à jour ou supprimer des dépenses
   Future<List<ExpenseItem>> getExpenses() async {
     final snapshot = await db.collection('expenses').get();
     return snapshot.docs.map((doc) {

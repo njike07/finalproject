@@ -22,7 +22,7 @@ class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> {
   Widget build(BuildContext context) {
     if (showLoginPage) {
       return LoginPage(
-        onTap: togglePages, // Utilisez des parenthèses ici
+        onTap: togglePages,
       );
     } else {
       return Registerpage(

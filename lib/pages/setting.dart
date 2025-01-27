@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projetfinal/components/animated_toggle_button.dart';
 import 'package:projetfinal/model/theme_color.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:projetfinal/noti_service.dart'; // Assurez-vous que ce fichier existe
+import 'package:projetfinal/noti_service.dart';
 import 'package:projetfinal/pages/category_expenses.dart';
 import 'package:projetfinal/pages/homePage.dart';
 
@@ -233,9 +233,7 @@ class _SettingPageState extends State<SettingPage>
                         child: Padding(
                           padding: EdgeInsets.all(width * 0.05),
                         ),
-                        onPressed: () {
-                          // Ajoutez votre logique ici
-                        },
+                        onPressed: () {},
                       )
                     ],
                   ),
@@ -257,16 +255,14 @@ class _SettingPageState extends State<SettingPage>
         onTap: (index) {
           if (index == 0) {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ExpenseList()), // Assurez-vous que cette classe existe
+              MaterialPageRoute(builder: (context) => ExpenseList()),
             );
           } else if (index == 1) {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => CategoryExpenses(
                         expenses: [],
-                      )), // Assurez-vous que cette classe existe
+                      )), 
             );
           }
         },

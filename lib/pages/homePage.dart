@@ -58,12 +58,11 @@ class _ExpenseListState extends State<ExpenseList> {
       String category, DateTime date) {
     // Valider les entrées avant de modifier
     if (title.isEmpty || amount <= 0 || category.isEmpty) {
-      // Vous pouvez afficher un message d'erreur ici si nécessaire
       return;
     }
 
     setState(() {
-      // Créer une nouvelle instance de ExpenseItem
+      // Creation une nouvelle instance de ExpenseItem
       var updatedExpense = ExpenseItem(
         title: title,
         amount: amount,
@@ -120,7 +119,6 @@ class _ExpenseListState extends State<ExpenseList> {
                       },
                     ),
                     onTap: () {
-                      // Ajoutez une fonctionnalité pour éditer si nécessaire
                     },
                   ),
                 );
@@ -152,7 +150,7 @@ class _ExpenseListState extends State<ExpenseList> {
         onTap: (index) {
           if (index == 0) {
             // Navigation vers le graphique
-            // Ajoutez votre logique ici
+
           } else if (index == 1) {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => Homepage()),
@@ -173,7 +171,7 @@ class _ExpenseListState extends State<ExpenseList> {
   Widget _buildWeeklyExpensesChart() {
     List<double> expenses = _getWeeklyExpenses();
     double maxExpense =
-        expenses.reduce((a, b) => a > b ? a : b); // Trouver le montant maximum
+        expenses.reduce((a, b) => a > b ? a : b); // ici on trouve le montant maximum
     double maxBarHeight = 100.0;
 
     return Padding(
@@ -204,7 +202,8 @@ class _ExpenseListState extends State<ExpenseList> {
                 ),
               ),
               SizedBox(height: 5),
-              Text(_getWeekdayLabel(index)), // Jours de la semaine
+              Text(_getWeekdayLabel(index)), 
+              // Jours de la semaine
             ],
           );
         }),
