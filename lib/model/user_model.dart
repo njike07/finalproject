@@ -10,12 +10,4 @@ class UserModel {
     required this.password,
     required this.confirmpassword,
   });
-
-  /*toJson() {
-    return {
-      "Email": email,
-      "Password": password,
-      "confirmPassword": confirmpassword,
-    };
-  }*/
 }
