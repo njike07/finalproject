@@ -148,7 +148,7 @@ class _RegisterPageState extends State<Registerpage> {
 
                 MyTextField(
                   controller: confirmpasswordController,
-                  hintText: 'Confirm Password',
+                  hintText: 'Confirm Password ',
                   obscureText: true,
                 ),
 
