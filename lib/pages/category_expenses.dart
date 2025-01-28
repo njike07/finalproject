@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:projetfinal/components/add_transaction.dart';
+import 'package:projetfinal/components/expense_item.dart';
 import 'package:projetfinal/pages/homePage.dart';
 import 'package:projetfinal/pages/setting.dart';
 
@@ -12,7 +13,7 @@ class Expense {
 }
 
 class CategoryExpenses extends StatelessWidget {
-  final List<Expense> expenses;
+  final List<ExpenseItem> expenses;
 
   const CategoryExpenses({super.key, required this.expenses});
 

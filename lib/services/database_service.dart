@@ -14,7 +14,7 @@ class DatabaseService {
   }
 
   Future<List<ExpenseItem>> getExpenses() async {
-    final snapshot = await db.collection('expenses').get();
+    final snapshot = await db.collection("expenses").get();
     return snapshot.docs.map((doc) {
       return ExpenseItem(
         title: doc['title'],

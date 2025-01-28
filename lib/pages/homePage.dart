@@ -198,7 +198,7 @@ class _ExpenseListState extends State<ExpenseList> {
             Navigator.of(context).push(
               MaterialPageRoute(
                   builder: (context) => CategoryExpenses(
-                        expenses: [],
+                        expenses: _expenses,
                       )),
             );
           }
